@@ -1,4 +1,4 @@
-import { useState, ReactNode } from 'react';
+import { ReactNode, useMemo, useState } from 'react';
 import styles from './Table.module.css';
 
 export interface TableColumn<T> {
@@ -17,28 +17,34 @@ const Table = <T,>({
   columns,
   data,
   itemsPerPage = 10,
-  className
+  className = ''
 }: TableProps<T>) => {
   const [currentPage, setCurrentPage] = useState(1);
 
-  const totalPages = Math.ceil(data.length / itemsPerPage);
-
-  const paginatedData = data.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+  // Memoizing totalPages to prevent unnecessary recalculation on every render
+  const totalPages = useMemo(
+    () => Math.ceil(data.length / itemsPerPage),
+    [data, itemsPerPage]
   );
+
+  const paginatedData = useMemo(() => {
+    return data.slice(
+      (currentPage - 1) * itemsPerPage,
+      currentPage * itemsPerPage
+    );
+  }, [data, currentPage, itemsPerPage]);
 
   const handlePageChange = (page: number) => {
     if (page > 0 && page <= totalPages) setCurrentPage(page);
   };
 
   return (
-    <div className={`${styles.tableContainer} ${className || ''}`}>
+    <div className={`${styles.tableContainer} ${className}`}>
       <table className={styles.table}>
         <thead>
           <tr>
             {columns.map((col) => (
-              <th key={String(col.key)} className={styles.header}>
+              <th key={col.key as string} className={styles.header}>
                 {col.header}
               </th>
             ))}
@@ -48,11 +54,10 @@ const Table = <T,>({
           {paginatedData.map((row, rowIndex) => (
             <tr key={rowIndex} className={styles.row}>
               {columns.map((col) => (
-                <td key={String(col.key)} className={styles.cell}>
-                  {
-                    /* Safely cast or transform value to ReactNode */
-                    (row[col.key] as ReactNode) || null
-                  }
+                <td key={col.key as string} className={styles.cell}>
+                  {row[col.key] === undefined || row[col.key] === null
+                    ? ('' as ReactNode)
+                    : (row[col.key] as ReactNode)}
                 </td>
               ))}
             </tr>
