@@ -6,8 +6,12 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      '/api':
-        'https://tubular-trifle-d57961.netlify.app/.netlify/functions/proxy'
+      '/api': {
+        target: 'https://raw.githubusercontent.com', // GitHub's base URL
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/api/, '') // Remove '/api' prefix when making requests
+      }
     },
     watch: {
       usePolling: true
