@@ -7,10 +7,10 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://raw.githubusercontent.com', // GitHub's base URL
+        target: 'http://localhost:5173', // For local dev only
         changeOrigin: true,
         secure: false,
-        rewrite: (path) => path.replace(/^\/api/, '') // Remove '/api' prefix when making requests
+        rewrite: (path) => path.replace(/^\/api/, '') // Remove '/api' prefix for local requests
       }
     },
     watch: {

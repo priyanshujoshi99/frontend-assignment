@@ -1,2 +1,2 @@
 export const getFetchProjectUrl = () =>
-  '/api/saaslabsco/frontend-assignment/refs/heads/master/frontend-assignment.json';
+  '/.netlify/functions/proxy/saaslabsco/frontend-assignment/refs/heads/master/frontend-assignment.json';
