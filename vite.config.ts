@@ -6,11 +6,14 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      '/api': {
-        target: 'http://localhost:5173', // For local dev only
+      '/.netlify/functions/proxy': {
+        target: 'https://raw.githubusercontent.com', // GitHub's base URL
         changeOrigin: true,
         secure: false,
-        rewrite: (path) => path.replace(/^\/api/, '') // Remove '/api' prefix for local requests
+        rewrite: (path) => {
+          // Remove the '/.netlify/functions/proxy' prefix and rewrite the path
+          return path.replace(/^\/\.netlify\/functions\/proxy/, '');
+        }
       }
     },
     watch: {
